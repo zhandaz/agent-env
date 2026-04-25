@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Push stdin to the outer terminal's clipboard via OSC 52, wrapped in tmux
+# DCS passthrough so it bypasses tmux's set-clipboard machinery (which is
+# silently dropped over mosh on some stacks).
+#
+# Requires `allow-passthrough on` in tmux; without it, the DCS wrapper
+# would leak through tmux unhandled and the outer terminal would render
+# the escape bytes as garbage.
+#
+# Arg 1: pane tty (e.g. /dev/pts/N), supplied by tmux via #{pane_tty}.
+tty="${1:-/dev/tty}"
+data=$(base64 | tr -d '\n')
+printf '\ePtmux;\e\e]52;c;%s\a\e\\' "$data" > "$tty"
