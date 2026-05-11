@@ -1,4 +1,12 @@
 {
+  "env": {
+    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
+    "CLAUDE_CODE_NO_FLICKER": "1"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(gh issue list:*)",
@@ -24,17 +32,9 @@
       "Bash(rm:*)",
       "Bash"
     ],
-    "defaultMode": "default"
-  },
-  "sandbox": {
-    "enableWeakerNetworkIsolation": true,
-    "network": {
-      "allowedDomains": ["api.github.com", "github.com"]
-    }
+    "defaultMode": "auto"
   },
   "model": "opus[1m]",
-  "effortLevel": "max",
-  "alwaysThinkingEnabled": true,
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "superpowers@claude-plugins-official": false
@@ -47,12 +47,46 @@
       }
     }
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
+  "sandbox": {
+    "network": {
+      "allowedDomains": [
+        "api.github.com",
+        "github.com"
+      ]
+    },
+    "enableWeakerNetworkIsolation": true
   },
-  "env": {
-    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
-    "CLAUDE_CODE_NO_FLICKER": "1"
+  "alwaysThinkingEnabled": true,
+  "theme": "light-daltonized",
+  "skipAutoPermissionPrompt": true,
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "$HOME/.tmux/claude-status idle" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "$HOME/.tmux/claude-status busy" }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          { "type": "command", "command": "$HOME/.tmux/claude-status wait" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "$HOME/.tmux/claude-status idle" }
+        ]
+      }
+    ]
   }
 }
