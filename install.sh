@@ -33,6 +33,7 @@ link() {
 
 link "$REPO_DIR/tmux/.tmux.conf"      "$HOME/.tmux.conf"
 link "$REPO_DIR/tmux/copy-osc52"      "$HOME/.tmux/copy-osc52"
+link "$REPO_DIR/tmux/claude-status"   "$HOME/.tmux/claude-status"
 link "$REPO_DIR/claude/settings.json" "$HOME/.claude/settings.json"
 link "$REPO_DIR/glow/glow.yml"        "$HOME/.config/glow/glow.yml"
 

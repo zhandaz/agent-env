@@ -8,6 +8,7 @@ the same baseline in a few minutes.
 ```
 tmux/.tmux.conf         -> ~/.tmux.conf
 tmux/copy-osc52         -> ~/.tmux/copy-osc52
+tmux/claude-status      -> ~/.tmux/claude-status   (window-name state helper)
 claude/settings.json    -> ~/.claude/settings.json
 glow/glow.yml           -> ~/.config/glow/glow.yml
 install.sh              one-shot installer
@@ -37,6 +38,7 @@ If you prefer explicit steps:
 mkdir -p ~/.tmux ~/.claude ~/.config/glow
 ln -sf ~/software/agent-env/tmux/.tmux.conf      ~/.tmux.conf
 ln -sf ~/software/agent-env/tmux/copy-osc52      ~/.tmux/copy-osc52
+ln -sf ~/software/agent-env/tmux/claude-status   ~/.tmux/claude-status
 ln -sf ~/software/agent-env/claude/settings.json ~/.claude/settings.json
 ln -sf ~/software/agent-env/glow/glow.yml        ~/.config/glow/glow.yml
 
@@ -72,6 +74,27 @@ mkdir -p ~/.local/bin
 mv glow_*/glow ~/.local/bin/
 rm -rf glow_* glow.tar.gz
 ```
+
+## Claude Code state in tmux window name
+
+`claude/settings.json` registers hooks (`SessionStart`, `UserPromptSubmit`,
+`Notification`, `Stop`) that prefix the current tmux window name with
+`[idle]`, `[busy]`, or `[wait]` to reflect Claude Code's session state.
+`tmux/claude-status` is the helper invoked by the hooks; it disables both
+`automatic-rename` and `allow-rename` per-window so the prefix sticks
+(otherwise Claude's own title pushes overwrite it).
+
+The base name is preserved across state changes: `tmux rename-window foo`
+yields `[idle] foo` -> `[busy] foo` -> ... You can rename the base at any
+time and the next hook firing picks it up.
+
+**Limitation:** the hooks invoke `tmux rename-window` from the same machine
+Claude runs on. When Claude runs on a slurm compute node via
+`srun --overlap` / `sattach`, the hook subprocess executes on the compute
+node — but tmux's socket lives at `/tmp/tmux-$UID/default` on the *login*
+node, and `/tmp` is not shared across nodes. The rename silently fails. So
+the prefix only reflects state for Claude sessions running directly in a
+login-node tmux pane. Compute-node Claude shows no prefix.
 
 ## Clipboard / OSC 52
 

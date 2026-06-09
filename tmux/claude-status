@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Stamp the current tmux window name with a Claude Code state prefix.
+# Invoked from Claude Code hooks; no-op outside tmux.
+#
+# Usage: claude-status <state>
+#   <state> is a short token, e.g. idle | busy | wait.
+#
+# Behavior: reads the window's current name, strips any existing
+# "[token] " prefix, and re-prefixes with "[<state>] ". So a window
+# manually renamed to "agent-env" cycles through "[busy] agent-env",
+# "[idle] agent-env", etc., and the user can rename the base at any
+# time without breaking the prefix.
+#
+# Also disables tmux's automatic-rename for the window so the prefix
+# is not stomped by tmux's process-name watcher on the next refresh.
+
+set -u
+
+state="${1:-idle}"
+
+[ -n "${TMUX:-}" ] || exit 0
+[ -n "${TMUX_PANE:-}" ] || exit 0
+
+tmux set-window-option -t "$TMUX_PANE" automatic-rename off >/dev/null 2>&1 || exit 0
+tmux set-window-option -t "$TMUX_PANE" allow-rename off >/dev/null 2>&1 || true
+
+current="$(tmux display-message -p -t "$TMUX_PANE" '#W' 2>/dev/null)" || exit 0
+base="${current#\[*\] }"
+
+tmux rename-window -t "$TMUX_PANE" "[$state] $base" >/dev/null 2>&1 || true
