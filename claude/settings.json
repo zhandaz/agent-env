@@ -29,8 +29,7 @@
       "WebFetch(domain:code.claude.com)"
     ],
     "ask": [
-      "Bash(rm:*)",
-      "Bash"
+      "Bash(rm:*)"
     ],
     "defaultMode": "auto"
   },
@@ -57,6 +56,9 @@
     "enableWeakerNetworkIsolation": true
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
   "theme": "light-daltonized",
   "skipAutoPermissionPrompt": true,
   "hooks": {
